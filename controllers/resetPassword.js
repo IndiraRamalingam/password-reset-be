@@ -35,8 +35,8 @@ const resetPassword ={
   let link = `http://localhost:5173/reset_password/${token}`;
 // let link = `https://dynamic-banoffee-ec2200.netlify.app/reset_password/${token}`;       
 
-    await sendMail(userDB.email, "Password Reset App - Reset your password", `<p>Hello! ${email}, You have requested to reset your password.</p>
-    <p>Please click the following link to reset your password: ${link}`);
+    await sendMail(userDB.email, "Password Reset App - Reset your password", `<p>Hello! <i>${email}</i>, You have requested to reset your password.</p>
+    <p>Please click the following link to reset your password: <i>${link}</i></p>`);
     res.status(200).send({
       message: `Reset link sent to mail ${userDB.email} and link is ${link}`,
     });
@@ -50,30 +50,19 @@ const resetPassword ={
 
   verifyAndUpdatePassword : async(req,res)=>{
     try{
-      
-      console.log("Entered")
       const{token,password} = req.body;
-      console.log( token)
-      
-      
+
        let userDB=await User.findOne({ resetToken: token });
-      //  //checking user is in db or not
-      //   
-      //  if (!userDB)
-      //   return res.status(400).send({ Error: "Invalid Link or Expired" });
 
         //checking token is present in db is the token sent by the user or not
         const isTokenValid = userDB.resetToken === token;
 
         //checking if the time limit to change the password has the expired
         const isntExpired = userDB.resetExpiry > Date.now();
-        console.log("Checking... "+isTokenValid, isntExpired);
 
         if (isTokenValid && isntExpired) {
-        console.log("Passed")
             
           const hashedNewPassword = await bcrypt.hash(password, 10);
-          console.log("HashedPW -->  "+ hashedNewPassword);
 
           //deleting the token and expiry time after updating password
           const updatePasswordDB = await User.findOneAndUpdate(

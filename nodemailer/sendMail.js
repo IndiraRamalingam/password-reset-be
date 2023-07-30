@@ -12,10 +12,6 @@ const sendMail = async (email, subject, text) => {
       user: CONFIG.USER,
       pass: CONFIG.PASSWORD,
     },
-    // tls: {
-    //   rejectUnauthorized: false,
-    // },
-    
   });
 
   var mailOptions = {
